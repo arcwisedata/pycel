@@ -42,7 +42,8 @@ def test_module_version():
 
 
 def test_module_version_components():
-    loose = LooseVersion(pycel.__version__).version
+    base_version = pycel.__version__.split('+')[0]
+    loose = LooseVersion(base_version).version
     for component in loose:
         assert isinstance(component, int) or component in ('a', 'b', 'rc')
 
@@ -58,7 +59,8 @@ def test_docs_versions(changes_rst):
         assert version[-1] == ']'
 
     assert doc_versions[0] == '[unreleased]'
-    assert pycel.version.__version__ == doc_versions[1][1:-1]
+    base_version = pycel.version.__version__.split('+')[0]
+    assert base_version == doc_versions[1][1:-1]
 
     for v1, v2 in zip(doc_versions[1:], doc_versions[2:]):
         assert LooseVersion(v1[1:-1]) > LooseVersion(v2[1:-1])
@@ -72,7 +74,6 @@ def test_binder_requirements(setup_py):
 
         setup_reqs = setup_py.setup.mock_calls[0][2]['install_requires']
 
-        # the binder requirements also include the optional graphing libs
         assert binder_reqs == sorted(setup_reqs + ['matplotlib', 'pydot'])
 
 
